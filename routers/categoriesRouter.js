@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { getAllCategories, postCategory } from "../controllers/categoriesController.js";
+import { validCatName } from "../middwares/validCatNameMiddware.js";
 
 const categoriesRouter = Router();
 
-categoriesRouter.use("/categories", getAllCategories);
-categoriesRouter.use("/categories", postCategory);
+categoriesRouter.get("/categories", getAllCategories);
+categoriesRouter.post("/categories", validCatName, postCategory);
 
 export default categoriesRouter;
