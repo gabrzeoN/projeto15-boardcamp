@@ -1,6 +1,15 @@
 import db from "../config/db.js";
 
 export async function getAllCustomers(req, res){
+    try{
+        const result = await db.query(`SELECT * FROM customers;`);
+        res.status(200).send(result.rows);
+    }catch(error){
+        res.sendStatus(500);
+    }
+}
+
+export async function getCustomer(req, res){
     let {name} = req.query;
     try{
         let result = null;
