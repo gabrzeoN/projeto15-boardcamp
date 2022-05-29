@@ -20,14 +20,15 @@ export async function validNewCustomer(req, res, next){
     }
 }
 
-export async function validUpdateCustomer(req, res, next){
+export async function validCustomerExisits(req, res, next){
     const {customerId} = req.params;
     try {
         const resultCustomer = await db.query(`SELECT * FROM customers WHERE id = $1;`, [customerId]);
         const customerExists = resultCustomer.rows[0];
         if(!customerExists){
-            return res.status(400).send("Customer doesn't exists!");
+            return res.status(404).send("Customer doesn't exists!");
         }
+        res.locals.customer = customerExists;
         next();
     } catch (error) {
         return res.sendStatus(500);
