@@ -14,7 +14,7 @@ export async function validCatName(req, res, next){
         const categoryExists = result.rows[0];
 
         if(categoryExists){
-            return res.status(409).send("Category already existis!");
+            return res.status(409).send("Category already exists!");
         }
         next();
     } catch (error) {
