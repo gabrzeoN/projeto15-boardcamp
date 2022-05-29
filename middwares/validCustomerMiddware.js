@@ -1,7 +1,7 @@
 import customerSchema from "./../schemas/customerSchema.js";
 import db from "../config/db.js";
 
-export async function validCustomer(req, res, next){
+export async function validNewCustomer(req, res, next){
     const {name, phone, cpf, birthday} = req.body;
     console.log(req.body)
     const {error} = customerSchema.validate(req.body);
@@ -13,6 +13,20 @@ export async function validCustomer(req, res, next){
         const customerExists = resultCustomer.rows[0];
         if(customerExists){
             return res.status(409).send("Customer already exists!");
+        }
+        next();
+    } catch (error) {
+        return res.sendStatus(500);
+    }
+}
+
+export async function validUpdateCustomer(req, res, next){
+    const {customerId} = req.params;
+    try {
+        const resultCustomer = await db.query(`SELECT * FROM customers WHERE id = $1;`, [customerId]);
+        const customerExists = resultCustomer.rows[0];
+        if(!customerExists){
+            return res.status(400).send("Customer doesn't exists!");
         }
         next();
     } catch (error) {
