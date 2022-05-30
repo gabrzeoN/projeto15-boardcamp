@@ -17,4 +17,5 @@ app.use(gamesRouter);
 app.use(customersRouter);
 app.use(rentalsRouter);
 
-app.listen(process.env.PORT, () => console.log(`Server online on port ${process.env.PORT}!`));
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Server online on port ${port}!`));

@@ -19,7 +19,7 @@ export async function validGame(req, res, next){
         if(gameExists){
             return res.status(409).send("Game already exists!");
         }
-
+        
         next();
     } catch (error) {
         return res.sendStatus(500);
