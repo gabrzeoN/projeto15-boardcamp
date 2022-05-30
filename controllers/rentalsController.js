@@ -63,3 +63,18 @@ export async function postRentalReturn(req, res){
         return res.sendStatus(500);  
     }
 }
+
+export async function deleteRental(req, res){
+    const {rentalId} = req.params;
+    try{
+        await db.query(`
+            DELETE FROM rentals 
+            WHERE id = $1;`,
+            [rentalId]
+        );
+        return res.sendStatus(200);
+    }catch(error){
+        console.log(error);
+        return res.sendStatus(500);  
+    }
+}
