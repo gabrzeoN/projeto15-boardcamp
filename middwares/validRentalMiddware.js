@@ -32,16 +32,24 @@ export async function validNewRental(req, res, next){
 }
 
 export async function validRentalExisits(req, res, next){
-    const {customerId} = req.params;
+    const {rentalId} = req.params;
     try {
-        const resultCustomer = await db.query(`SELECT * FROM customers WHERE id = $1;`, [customerId]);
-        const customerExists = resultCustomer.rows[0];
-        if(!customerExists){
-            return res.status(404).send("Customer doesn't exists!");
+        const resultRental = await db.query(`SELECT * FROM rentals WHERE id = $1;`, [rentalId]);
+        const rentalExists = resultRental.rows[0];
+        if(!rentalExists){
+            return res.status(404).send("Rental doesn't exists!");
         }
-        res.locals.customer = customerExists;
+        res.locals.rental = rentalExists;
         next();
     } catch (error) {
         return res.sendStatus(500);
     }
+}
+
+export async function validRentalReturn(req, res, next){
+    const {rental} = res.locals;
+    if(rental.returnDate){
+        return res.status(400).send("Rental already finished!");
+    }
+    next();
 }

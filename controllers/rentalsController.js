@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import db from "../config/db.js";
+import {compareDate} from "./../src/utils.js";
 
 // export async function getAllCustomers(req, res){
 //     try{
@@ -35,18 +36,30 @@ export async function postRental(req, res){
     }
 }
 
-// export async function updateCustomer(req, res){
-//     const {customerId} = req.params;
-//     const {name, phone, cpf, birthday} = req.body;
-//     try{
-//         await db.query(`
-//             UPDATE customers 
-//             SET name = $1, phone = $2, cpf = $3, birthday = $4
-//             WHERE id = $5;`,
-//             [name, phone, cpf, birthday, customerId]
-//         );
-//         return res.sendStatus(200);
-//     }catch(error){
-//         return res.sendStatus(500);  
-//     }
-// }
+export async function postRentalReturn(req, res){
+    const {rental} = res.locals;
+    const {rentDate, daysRented, originalPrice} = rental;
+    const {rentalId} = req.params;
+
+    const pricePerDay = originalPrice / daysRented;
+    let delayFee = 0;
+    const returnDate = new Date();
+    const daysPassed = compareDate(rentDate, returnDate);
+
+    if(daysPassed > daysRented){
+        delayFee = ((daysPassed - daysRented) * pricePerDay);
+    }
+
+    try{
+        await db.query(`
+            UPDATE rentals 
+            SET "returnDate" = $1, "delayFee" = $2
+            WHERE id = $3;`,
+            [returnDate, delayFee, rentalId]
+        );
+        return res.sendStatus(200);
+    }catch(error){
+        console.log(error);
+        return res.sendStatus(500);  
+    }
+}
